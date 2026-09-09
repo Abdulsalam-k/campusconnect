@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function AdminUserDetails() {
   const { id } = useParams();
@@ -22,7 +23,7 @@ function AdminUserDetails() {
         setError("");
 
         const response = await fetch(
-          `http://localhost:5000/api/admin/users/${id}`,
+          `${API_URL}/api/admin/users/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -34,7 +35,8 @@ function AdminUserDetails() {
 
         if (!response.ok) {
           throw new Error(
-            result.message || "Failed to fetch user details."
+            result.message ||
+              "Failed to fetch user details."
           );
         }
 

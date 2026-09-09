@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function ApplicantDetails() {
   const { id } = useParams();
@@ -36,7 +37,7 @@ function ApplicantDetails() {
         setError("");
 
         const response = await fetch(
-          `http://localhost:5000/api/recruiter/applications/${id}`,
+          `${API_URL}/api/recruiter/applications/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -81,7 +82,7 @@ function ApplicantDetails() {
       setError("");
 
       const response = await fetch(
-        `http://localhost:5000/api/applications/${id}/status`,
+        `${API_URL}/api/applications/${id}/status`,
         {
           method: "PUT",
           headers: {

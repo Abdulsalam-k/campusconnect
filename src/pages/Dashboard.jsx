@@ -6,6 +6,7 @@ import {
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function Dashboard() {
   const { user, token } = useAuth();
@@ -38,26 +39,28 @@ function Dashboard() {
         setLoading(true);
         setError("");
 
-        const [applicationsResponse, savedResponse] =
-          await Promise.all([
-            fetch(
-              "http://localhost:5000/api/applications/my",
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            ),
+        const [
+          applicationsResponse,
+          savedResponse,
+        ] = await Promise.all([
+          fetch(
+            `${API_URL}/api/applications/my`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          ),
 
-            fetch(
-              "http://localhost:5000/api/saved-opportunities",
-              {
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            ),
-          ]);
+          fetch(
+            `${API_URL}/api/saved-opportunities`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          ),
+        ]);
 
         const applicationsResult =
           await applicationsResponse.json();
@@ -160,7 +163,8 @@ function Dashboard() {
       Array.isArray(user.skills) &&
       user.skills.length > 0;
 
-    const totalFields = fields.length + 1;
+    const totalFields =
+      fields.length + 1;
 
     const completedCount =
       completedFields +
@@ -470,7 +474,9 @@ function Dashboard() {
                             {opportunity.location && (
                               <span>
                                 📍{" "}
-                                {opportunity.location}
+                                {
+                                  opportunity.location
+                                }
                               </span>
                             )}
 
@@ -507,7 +513,9 @@ function Dashboard() {
                       <div className="dashboard-application-actions">
 
                         <span
-                          className={`dashboard-status ${application.status.toLowerCase()}`}
+                          className={`dashboard-status ${
+                            application.status.toLowerCase()
+                          }`}
                         >
                           {application.status}
                         </span>

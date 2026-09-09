@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+import API_URL from "../config/api";
+
 function StudentSpotlight() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +15,7 @@ function StudentSpotlight() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/students"
+          `${API_URL}/api/students`
         );
 
         const result = await response.json();
@@ -152,7 +154,10 @@ function StudentSpotlight() {
               {students.map((student) => (
                 <article
                   className="student-spotlight-card"
-                    key={student.id || student._id}
+                  key={
+                    student.id ||
+                    student._id
+                  }
                 >
                   <div className="student-spotlight-card-top">
                     {student.profileImage ? (
@@ -163,7 +168,9 @@ function StudentSpotlight() {
                       />
                     ) : (
                       <div className="student-spotlight-avatar">
-                        {getInitials(student.name)}
+                        {getInitials(
+                          student.name
+                        )}
                       </div>
                     )}
 
@@ -215,8 +222,10 @@ function StudentSpotlight() {
 
                   <div className="student-spotlight-footer">
                     <Link
-                    to={`/students/${student.id || student._id}`}
-                      
+                      to={`/students/${
+                        student.id ||
+                        student._id
+                      }`}
                       className="student-spotlight-link"
                     >
                       View profile →

@@ -1,5 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function Profile() {
   const { user, token, login } = useAuth();
@@ -16,16 +22,21 @@ function Profile() {
   });
 
   const [profileImage, setProfileImage] = useState("");
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [imagePreview, setImagePreview] = useState("");
+  const [selectedImage, setSelectedImage] =
+    useState(null);
+  const [imagePreview, setImagePreview] =
+    useState("");
 
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [removingImage, setRemovingImage] = useState(false);
+  const [loading, setLoading] =
+    useState(true);
+  const [saving, setSaving] =
+    useState(false);
+  const [removingImage, setRemovingImage] =
+    useState(false);
 
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
+  const [success, setSuccess] =
+    useState("");
 
   // ==========================================
   // LOAD USER DATA
@@ -40,7 +51,7 @@ function Profile() {
 
       try {
         const response = await fetch(
-          "http://localhost:5000/api/auth/me",
+          `${API_URL}/api/auth/me`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -48,7 +59,8 @@ function Profile() {
           }
         );
 
-        const result = await response.json();
+        const result =
+          await response.json();
 
         if (!response.ok) {
           throw new Error(
@@ -61,11 +73,16 @@ function Profile() {
 
         setFormData({
           name: currentUser.name || "",
-          education: currentUser.education || "",
-          department: currentUser.department || "",
-          location: currentUser.location || "",
+          education:
+            currentUser.education || "",
+          department:
+            currentUser.department || "",
+          location:
+            currentUser.location || "",
           bio: currentUser.bio || "",
-          skills: Array.isArray(currentUser.skills)
+          skills: Array.isArray(
+            currentUser.skills
+          )
             ? currentUser.skills.join(", ")
             : "",
         });
@@ -94,11 +111,16 @@ function Profile() {
         if (user) {
           setFormData({
             name: user.name || "",
-            education: user.education || "",
-            department: user.department || "",
-            location: user.location || "",
+            education:
+              user.education || "",
+            department:
+              user.department || "",
+            location:
+              user.location || "",
             bio: user.bio || "",
-            skills: Array.isArray(user.skills)
+            skills: Array.isArray(
+              user.skills
+            )
               ? user.skills.join(", ")
               : "",
           });
@@ -119,7 +141,6 @@ function Profile() {
     loadProfile();
   }, [token]);
 
-
   // ==========================================
   // CLEAN TEMPORARY PREVIEW
   // ==========================================
@@ -130,11 +151,12 @@ function Profile() {
         imagePreview &&
         imagePreview.startsWith("blob:")
       ) {
-        URL.revokeObjectURL(imagePreview);
+        URL.revokeObjectURL(
+          imagePreview
+        );
       }
     };
   }, [imagePreview]);
-
 
   // ==========================================
   // SCROLL TO TOP
@@ -146,7 +168,6 @@ function Profile() {
       behavior: "smooth",
     });
   }
-
 
   // ==========================================
   // HANDLE TEXT INPUT
@@ -166,7 +187,6 @@ function Profile() {
     setError("");
     setSuccess("");
   }
-
 
   // ==========================================
   // HANDLE IMAGE SELECTION
@@ -198,7 +218,10 @@ function Profile() {
       return;
     }
 
-    if (file.size > 2 * 1024 * 1024) {
+    if (
+      file.size >
+      2 * 1024 * 1024
+    ) {
       setError(
         "Profile image must not exceed 2MB."
       );
@@ -215,7 +238,9 @@ function Profile() {
       imagePreview &&
       imagePreview.startsWith("blob:")
     ) {
-      URL.revokeObjectURL(imagePreview);
+      URL.revokeObjectURL(
+        imagePreview
+      );
     }
 
     const previewUrl =
@@ -227,7 +252,6 @@ function Profile() {
     setError("");
     setSuccess("");
   }
-
 
   // ==========================================
   // VALIDATE PROFILE
@@ -287,7 +311,6 @@ function Profile() {
 
     return "";
   }
-
 
   // ==========================================
   // SAVE PROFILE
@@ -375,7 +398,7 @@ function Profile() {
 
       const response =
         await fetch(
-          "http://localhost:5000/api/auth/profile",
+          `${API_URL}/api/auth/profile`,
           {
             method: "PUT",
 
@@ -442,7 +465,6 @@ function Profile() {
     }
   }
 
-
   // ==========================================
   // REMOVE PROFILE IMAGE
   // ==========================================
@@ -466,9 +488,10 @@ function Profile() {
       return;
     }
 
-    const confirmed = window.confirm(
-      "Are you sure you want to remove your profile photo?"
-    );
+    const confirmed =
+      window.confirm(
+        "Are you sure you want to remove your profile photo?"
+      );
 
     if (!confirmed) {
       return;
@@ -482,7 +505,7 @@ function Profile() {
 
       const response =
         await fetch(
-          "http://localhost:5000/api/auth/profile-image",
+          `${API_URL}/api/auth/profile-image`,
           {
             method: "DELETE",
 
@@ -545,7 +568,6 @@ function Profile() {
     }
   }
 
-
   // ==========================================
   // LOADING
   // ==========================================
@@ -568,7 +590,6 @@ function Profile() {
     );
   }
 
-
   // ==========================================
   // ROLE LABEL
   // ==========================================
@@ -579,7 +600,6 @@ function Profile() {
       : user?.role === "recruiter"
       ? "Recruiter"
       : "Student";
-
 
   // ==========================================
   // SKILLS
@@ -593,7 +613,6 @@ function Profile() {
       )
       .filter(Boolean);
 
-
   // ==========================================
   // PROFILE INITIAL
   // ==========================================
@@ -604,7 +623,6 @@ function Profile() {
           .charAt(0)
           .toUpperCase()
       : "U";
-
 
   return (
     <div className="profile-page">
@@ -628,7 +646,6 @@ function Profile() {
 
       </div>
 
-
       {/* PROFILE LAYOUT */}
 
       <div className="profile-layout">
@@ -649,7 +666,6 @@ function Profile() {
             </p>
 
           </div>
-
 
           {/* PROFILE IMAGE */}
 
@@ -673,7 +689,6 @@ function Profile() {
 
             </div>
 
-
             <div className="profile-image-upload-content">
 
               <h3>
@@ -684,7 +699,6 @@ function Profile() {
                 Add a professional photo so people
                 can recognize you on CampusConnect.
               </p>
-
 
               <div className="profile-image-actions">
 
@@ -704,12 +718,13 @@ function Profile() {
                   Choose photo
                 </label>
 
-
                 {profileImage && (
                   <button
                     type="button"
                     className="profile-image-remove-button"
-                    onClick={handleRemoveImage}
+                    onClick={
+                      handleRemoveImage
+                    }
                     disabled={
                       removingImage ||
                       saving
@@ -723,7 +738,6 @@ function Profile() {
 
               </div>
 
-
               <small>
                 JPG, PNG or WebP · Maximum 2MB
               </small>
@@ -732,10 +746,11 @@ function Profile() {
 
           </div>
 
-
           {/* FORM */}
 
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={handleSubmit}
+          >
 
             {/* NAME */}
 
@@ -758,7 +773,6 @@ function Profile() {
 
             </div>
 
-
             {/* EMAIL */}
 
             <div className="form-group">
@@ -770,7 +784,9 @@ function Profile() {
               <input
                 id="email"
                 type="email"
-                value={user?.email || ""}
+                value={
+                  user?.email || ""
+                }
                 disabled
               />
 
@@ -780,7 +796,6 @@ function Profile() {
               </small>
 
             </div>
-
 
             {/* ROLE */}
 
@@ -804,7 +819,6 @@ function Profile() {
 
             </div>
 
-
             {/* DEPARTMENT */}
 
             <div className="form-group">
@@ -817,14 +831,15 @@ function Profile() {
                 id="department"
                 name="department"
                 type="text"
-                value={formData.department}
+                value={
+                  formData.department
+                }
                 onChange={handleChange}
                 placeholder="e.g. Information Technology"
                 maxLength="150"
               />
 
             </div>
-
 
             {/* EDUCATION */}
 
@@ -838,14 +853,15 @@ function Profile() {
                 id="education"
                 name="education"
                 type="text"
-                value={formData.education}
+                value={
+                  formData.education
+                }
                 onChange={handleChange}
                 placeholder="e.g. B.Tech Information Technology"
                 maxLength="150"
               />
 
             </div>
-
 
             {/* LOCATION */}
 
@@ -859,14 +875,15 @@ function Profile() {
                 id="location"
                 name="location"
                 type="text"
-                value={formData.location}
+                value={
+                  formData.location
+                }
                 onChange={handleChange}
                 placeholder="e.g. Akure, Nigeria"
                 maxLength="100"
               />
 
             </div>
-
 
             {/* SKILLS */}
 
@@ -890,7 +907,6 @@ function Profile() {
               </small>
 
             </div>
-
 
             {/* BIO */}
 
@@ -916,7 +932,6 @@ function Profile() {
 
             </div>
 
-
             {/* ERROR */}
 
             {error && (
@@ -932,7 +947,6 @@ function Profile() {
 
               </div>
             )}
-
 
             {/* SUCCESS */}
 
@@ -950,7 +964,6 @@ function Profile() {
               </div>
             )}
 
-
             {/* SAVE */}
 
             <button
@@ -966,7 +979,6 @@ function Profile() {
           </form>
 
         </section>
-
 
         {/* PROFILE PREVIEW */}
 
@@ -988,23 +1000,19 @@ function Profile() {
 
           </div>
 
-
           <p className="profile-preview-role">
             {roleLabel}
           </p>
-
 
           <h2>
             {formData.name ||
               "Your Name"}
           </h2>
 
-
           <p className="profile-preview-email">
             {user?.email ||
               "your@email.com"}
           </p>
-
 
           {formData.education && (
             <p>
@@ -1012,20 +1020,17 @@ function Profile() {
             </p>
           )}
 
-
           {formData.department && (
             <p>
               🏫 {formData.department}
             </p>
           )}
 
-
           {formData.location && (
             <p>
               📍 {formData.location}
             </p>
           )}
-
 
           {formData.bio && (
             <div className="profile-preview-bio">
@@ -1040,7 +1045,6 @@ function Profile() {
 
             </div>
           )}
-
 
           {skills.length > 0 && (
             <div className="profile-preview-skills">

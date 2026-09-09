@@ -1,6 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import { FiEye } from "react-icons/fi";
+
+import API_URL from "../config/api";
 
 function ResetPassword() {
   const { token } = useParams();
@@ -11,17 +17,25 @@ function ResetPassword() {
     confirmPassword: "",
   });
 
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] =
+    useState(false);
 
-  const [loading, setLoading] = useState(false);
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);
 
-  const [feedback, setFeedback] = useState({
-    type: "",
-    message: "",
-  });
+  const [loading, setLoading] =
+    useState(false);
 
-  const [resetComplete, setResetComplete] = useState(false);
+  const [feedback, setFeedback] =
+    useState({
+      type: "",
+      message: "",
+    });
+
+  const [resetComplete, setResetComplete] =
+    useState(false);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -40,29 +54,38 @@ function ResetPassword() {
       message: "",
     });
 
-    const { password, confirmPassword } = formData;
+    const {
+      password,
+      confirmPassword,
+    } = formData;
 
     if (!password || !confirmPassword) {
       setFeedback({
         type: "error",
-        message: "Please fill in both password fields.",
+        message:
+          "Please fill in both password fields.",
       });
+
       return;
     }
 
     if (password.length < 6) {
       setFeedback({
         type: "error",
-        message: "Password must be at least 6 characters.",
+        message:
+          "Password must be at least 6 characters.",
       });
+
       return;
     }
 
     if (password !== confirmPassword) {
       setFeedback({
         type: "error",
-        message: "Passwords do not match.",
+        message:
+          "Passwords do not match.",
       });
+
       return;
     }
 
@@ -70,11 +93,12 @@ function ResetPassword() {
       setLoading(true);
 
       const response = await fetch(
-        `http://localhost:5000/api/auth/reset-password/${token}`,
+        `${API_URL}/api/auth/reset-password/${token}`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
           body: JSON.stringify({
             password,
@@ -83,11 +107,13 @@ function ResetPassword() {
         }
       );
 
-      const result = await response.json();
+      const result =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(
-          result.message || "Unable to reset your password."
+          result.message ||
+            "Unable to reset your password."
         );
       }
 
@@ -106,7 +132,8 @@ function ResetPassword() {
       setFeedback({
         type: "error",
         message:
-          error.message || "Something went wrong. Please try again.",
+          error.message ||
+          "Something went wrong. Please try again.",
       });
     } finally {
       setLoading(false);
@@ -116,7 +143,8 @@ function ResetPassword() {
   function handleGoToLogin() {
     navigate("/login", {
       state: {
-        message: "Password reset successful. Please log in.",
+        message:
+          "Password reset successful. Please log in.",
       },
     });
   }
@@ -124,15 +152,21 @@ function ResetPassword() {
   return (
     <section className="auth-page">
       <div className="auth-card reset-password-card">
+
         {!resetComplete ? (
           <>
             <div className="auth-header">
-              <span className="auth-badge">Secure Reset</span>
+              <span className="auth-badge">
+                Secure Reset
+              </span>
 
-              <h1>Create a new password</h1>
+              <h1>
+                Create a new password
+              </h1>
 
               <p>
-                Choose a new password for your CampusConnect account.
+                Choose a new password for your
+                CampusConnect account.
               </p>
             </div>
 
@@ -148,18 +182,29 @@ function ResetPassword() {
               </div>
             )}
 
-            <form className="auth-form" onSubmit={handleSubmit}>
+            <form
+              className="auth-form"
+              onSubmit={handleSubmit}
+            >
               <div className="form-group">
+
                 <label htmlFor="reset-password">
                   New password
                 </label>
 
                 <div className="password-input-wrapper">
+
                   <input
                     id="reset-password"
                     name="password"
-                    type={showPassword ? "text" : "password"}
-                    value={formData.password}
+                    type={
+                      showPassword
+                        ? "text"
+                        : "password"
+                    }
+                    value={
+                      formData.password
+                    }
                     onChange={handleChange}
                     placeholder="Enter your new password"
                     autoComplete="new-password"
@@ -173,7 +218,10 @@ function ResetPassword() {
                         : ""
                     }`}
                     onClick={() =>
-                      setShowPassword((current) => !current)
+                      setShowPassword(
+                        (current) =>
+                          !current
+                      )
                     }
                     aria-label={
                       showPassword
@@ -190,22 +238,29 @@ function ResetPassword() {
                       <FiEye />
                     </span>
                   </button>
+
                 </div>
               </div>
 
               <div className="form-group">
+
                 <label htmlFor="reset-confirm-password">
                   Confirm new password
                 </label>
 
                 <div className="password-input-wrapper">
+
                   <input
                     id="reset-confirm-password"
                     name="confirmPassword"
                     type={
-                      showConfirmPassword ? "text" : "password"
+                      showConfirmPassword
+                        ? "text"
+                        : "password"
                     }
-                    value={formData.confirmPassword}
+                    value={
+                      formData.confirmPassword
+                    }
                     onChange={handleChange}
                     placeholder="Confirm your new password"
                     autoComplete="new-password"
@@ -219,7 +274,10 @@ function ResetPassword() {
                         : ""
                     }`}
                     onClick={() =>
-                      setShowConfirmPassword((current) => !current)
+                      setShowConfirmPassword(
+                        (current) =>
+                          !current
+                      )
                     }
                     aria-label={
                       showConfirmPassword
@@ -236,6 +294,7 @@ function ResetPassword() {
                       <FiEye />
                     </span>
                   </button>
+
                 </div>
               </div>
 
@@ -264,15 +323,22 @@ function ResetPassword() {
           </>
         ) : (
           <div className="reset-success-state">
-            <div className="reset-success-icon">✓</div>
 
-            <span className="auth-badge">Success</span>
+            <div className="reset-success-icon">
+              ✓
+            </div>
 
-            <h1>Password updated</h1>
+            <span className="auth-badge">
+              Success
+            </span>
+
+            <h1>
+              Password updated
+            </h1>
 
             <p>
-              Your CampusConnect password has been changed
-              successfully.
+              Your CampusConnect password has
+              been changed successfully.
             </p>
 
             {feedback.message && (
@@ -288,12 +354,13 @@ function ResetPassword() {
             >
               Continue to login
             </button>
+
           </div>
         )}
+
       </div>
     </section>
   );
 }
 
 export default ResetPassword;
-

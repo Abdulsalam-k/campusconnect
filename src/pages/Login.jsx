@@ -1,8 +1,12 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import { FiEye } from "react-icons/fi";
 
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function Login() {
   const navigate = useNavigate();
@@ -40,6 +44,7 @@ function Login() {
       setError(
         "Email and password are required."
       );
+
       return;
     }
 
@@ -47,32 +52,44 @@ function Login() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/auth/login",
+        `${API_URL}/api/auth/login`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
           body: JSON.stringify(formData),
         }
       );
 
-      const result = await response.json();
+      const result =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(
-          result.message || "Login failed."
+          result.message ||
+            "Login failed."
         );
       }
 
-      login(result.data, result.token);
+      login(
+        result.data,
+        result.token
+      );
 
-      if (result.data.role === "admin") {
+      if (
+        result.data.role ===
+        "admin"
+      ) {
         navigate("/admin-dashboard");
       } else if (
-        result.data.role === "recruiter"
+        result.data.role ===
+        "recruiter"
       ) {
-        navigate("/recruiter-dashboard");
+        navigate(
+          "/recruiter-dashboard"
+        );
       } else {
         navigate("/dashboard");
       }
@@ -108,7 +125,9 @@ function Login() {
           account.
         </p>
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+        >
 
           {/* EMAIL */}
 
@@ -122,7 +141,9 @@ function Login() {
               name="email"
               type="email"
               value={formData.email}
-              onChange={handleChange}
+              onChange={
+                handleChange
+              }
               placeholder="Enter your email"
               autoComplete="email"
             />
@@ -153,8 +174,12 @@ function Login() {
                     ? "text"
                     : "password"
                 }
-                value={formData.password}
-                onChange={handleChange}
+                value={
+                  formData.password
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Enter your password"
                 autoComplete="current-password"
               />
@@ -168,7 +193,8 @@ function Login() {
                 }`}
                 onClick={() =>
                   setShowPassword(
-                    (current) => !current
+                    (current) =>
+                      !current
                   )
                 }
                 aria-label={
@@ -208,6 +234,7 @@ function Login() {
               ? "Logging in..."
               : "Login"}
           </button>
+
         </form>
 
         {/* ACCOUNT LINK */}
@@ -231,4 +258,3 @@ function Login() {
 }
 
 export default Login;
-

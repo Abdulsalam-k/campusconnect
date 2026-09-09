@@ -1,18 +1,28 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function AdminApplications() {
   const { token } = useAuth();
 
   const [applications, setApplications] = useState([]);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("All");
-  const [loading, setLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState("");
-  const [error, setError] = useState("");
-  const [actionError, setActionError] = useState("");
+  const [statusFilter, setStatusFilter] =
+    useState("All");
+  const [loading, setLoading] =
+    useState(true);
+  const [updatingId, setUpdatingId] =
+    useState("");
+  const [error, setError] =
+    useState("");
+  const [actionError, setActionError] =
+    useState("");
 
   // ==========================================
   // FETCH ALL APPLICATIONS
@@ -25,7 +35,7 @@ function AdminApplications() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/applications",
+          `${API_URL}/api/applications`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -33,15 +43,19 @@ function AdminApplications() {
           }
         );
 
-        const result = await response.json();
+        const result =
+          await response.json();
 
         if (!response.ok) {
           throw new Error(
-            result.message || "Failed to fetch applications."
+            result.message ||
+              "Failed to fetch applications."
           );
         }
 
-        setApplications(result.data || []);
+        setApplications(
+          result.data || []
+        );
       } catch (error) {
         console.error(
           "Fetching admin applications failed:",
@@ -49,7 +63,8 @@ function AdminApplications() {
         );
 
         setError(
-          error.message || "Something went wrong."
+          error.message ||
+            "Something went wrong."
         );
       } finally {
         setLoading(false);
@@ -65,24 +80,29 @@ function AdminApplications() {
   // CHANGE APPLICATION STATUS
   // ==========================================
 
-  async function handleStatusChange(applicationId, status) {
+  async function handleStatusChange(
+    applicationId,
+    status
+  ) {
     try {
       setUpdatingId(applicationId);
       setActionError("");
 
       const response = await fetch(
-        `http://localhost:5000/api/applications/${applicationId}/status`,
+        `${API_URL}/api/applications/${applicationId}/status`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ status }),
         }
       );
 
-      const result = await response.json();
+      const result =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(
@@ -91,15 +111,18 @@ function AdminApplications() {
         );
       }
 
-      setApplications((currentApplications) =>
-        currentApplications.map((application) =>
-          application._id === applicationId
-            ? {
-                ...application,
-                status,
-              }
-            : application
-        )
+      setApplications(
+        (currentApplications) =>
+          currentApplications.map(
+            (application) =>
+              application._id ===
+              applicationId
+                ? {
+                    ...application,
+                    status,
+                  }
+                : application
+          )
       );
     } catch (error) {
       console.error(
@@ -120,44 +143,72 @@ function AdminApplications() {
   // FILTER APPLICATIONS
   // ==========================================
 
-  const filteredApplications = useMemo(() => {
-    const searchTerm = search.trim().toLowerCase();
+  const filteredApplications =
+    useMemo(() => {
+      const searchTerm =
+        search.trim().toLowerCase();
 
-    return applications.filter((application) => {
-      const applicantName =
-        typeof application.userId === "object"
-          ? application.userId?.name || ""
-          : application.fullName || "";
+      return applications.filter(
+        (application) => {
+          const applicantName =
+            typeof application.userId ===
+            "object"
+              ? application.userId?.name ||
+                ""
+              : application.fullName || "";
 
-      const applicantEmail =
-        typeof application.userId === "object"
-          ? application.userId?.email || ""
-          : application.email || "";
+          const applicantEmail =
+            typeof application.userId ===
+            "object"
+              ? application.userId?.email ||
+                ""
+              : application.email || "";
 
-      const opportunityTitle =
-        typeof application.opportunityId === "object"
-          ? application.opportunityId?.title || ""
-          : "";
+          const opportunityTitle =
+            typeof application.opportunityId ===
+            "object"
+              ? application.opportunityId
+                  ?.title || ""
+              : "";
 
-      const company =
-        typeof application.opportunityId === "object"
-          ? application.opportunityId?.company || ""
-          : "";
+          const company =
+            typeof application.opportunityId ===
+            "object"
+              ? application.opportunityId
+                  ?.company || ""
+              : "";
 
-      const matchesSearch =
-        !searchTerm ||
-        applicantName.toLowerCase().includes(searchTerm) ||
-        applicantEmail.toLowerCase().includes(searchTerm) ||
-        opportunityTitle.toLowerCase().includes(searchTerm) ||
-        company.toLowerCase().includes(searchTerm);
+          const matchesSearch =
+            !searchTerm ||
+            applicantName
+              .toLowerCase()
+              .includes(searchTerm) ||
+            applicantEmail
+              .toLowerCase()
+              .includes(searchTerm) ||
+            opportunityTitle
+              .toLowerCase()
+              .includes(searchTerm) ||
+            company
+              .toLowerCase()
+              .includes(searchTerm);
 
-      const matchesStatus =
-        statusFilter === "All" ||
-        application.status === statusFilter;
+          const matchesStatus =
+            statusFilter === "All" ||
+            application.status ===
+              statusFilter;
 
-      return matchesSearch && matchesStatus;
-    });
-  }, [applications, search, statusFilter]);
+          return (
+            matchesSearch &&
+            matchesStatus
+          );
+        }
+      );
+    }, [
+      applications,
+      search,
+      statusFilter,
+    ]);
 
   // ==========================================
   // CLEAR FILTERS
@@ -177,42 +228,62 @@ function AdminApplications() {
       return "Not available";
     }
 
-    return new Date(date).toLocaleDateString(
-      "en-NG",
-      {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }
+    return new Date(
+      date
+    ).toLocaleDateString("en-NG", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  }
+
+  function getApplicantName(
+    application
+  ) {
+    if (
+      application.userId &&
+      typeof application.userId ===
+        "object"
+    ) {
+      return (
+        application.userId.name ||
+        "Unknown applicant"
+      );
+    }
+
+    return (
+      application.fullName ||
+      "Unknown applicant"
     );
   }
 
-  function getApplicantName(application) {
+  function getApplicantEmail(
+    application
+  ) {
     if (
       application.userId &&
-      typeof application.userId === "object"
+      typeof application.userId ===
+        "object"
     ) {
-      return application.userId.name || "Unknown applicant";
+      return (
+        application.userId.email ||
+        "No email"
+      );
     }
 
-    return application.fullName || "Unknown applicant";
+    return (
+      application.email ||
+      "No email"
+    );
   }
 
-  function getApplicantEmail(application) {
-    if (
-      application.userId &&
-      typeof application.userId === "object"
-    ) {
-      return application.userId.email || "No email";
-    }
-
-    return application.email || "No email";
-  }
-
-  function getOpportunityTitle(application) {
+  function getOpportunityTitle(
+    application
+  ) {
     if (
       application.opportunityId &&
-      typeof application.opportunityId === "object"
+      typeof application.opportunityId ===
+        "object"
     ) {
       return (
         application.opportunityId.title ||
@@ -226,7 +297,8 @@ function AdminApplications() {
   function getCompany(application) {
     if (
       application.opportunityId &&
-      typeof application.opportunityId === "object"
+      typeof application.opportunityId ===
+        "object"
     ) {
       return (
         application.opportunityId.company ||
@@ -246,10 +318,13 @@ function AdminApplications() {
       <section className="admin-applications-page">
         <div className="admin-applications-container">
           <div className="admin-applications-state">
-            <h2>Loading applications...</h2>
+            <h2>
+              Loading applications...
+            </h2>
+
             <p>
-              Please wait while we retrieve all platform
-              applications.
+              Please wait while we retrieve
+              all platform applications.
             </p>
           </div>
         </div>
@@ -266,7 +341,10 @@ function AdminApplications() {
       <section className="admin-applications-page">
         <div className="admin-applications-container">
           <div className="admin-applications-state admin-error-state">
-            <h2>Unable to load applications</h2>
+            <h2>
+              Unable to load applications
+            </h2>
+
             <p>{error}</p>
 
             <Link
@@ -293,11 +371,13 @@ function AdminApplications() {
               ADMIN PORTAL
             </p>
 
-            <h1>Application Management</h1>
+            <h1>
+              Application Management
+            </h1>
 
             <p>
-              Review and manage applications submitted
-              across CampusConnect.
+              Review and manage applications
+              submitted across CampusConnect.
             </p>
           </div>
 
@@ -313,17 +393,24 @@ function AdminApplications() {
 
         <div className="admin-application-summary">
           <div>
-            <span>Total Applications</span>
-            <strong>{applications.length}</strong>
+            <span>
+              Total Applications
+            </span>
+
+            <strong>
+              {applications.length}
+            </strong>
           </div>
 
           <div>
             <span>Pending</span>
+
             <strong>
               {
                 applications.filter(
                   (application) =>
-                    application.status === "Pending"
+                    application.status ===
+                    "Pending"
                 ).length
               }
             </strong>
@@ -331,11 +418,13 @@ function AdminApplications() {
 
           <div>
             <span>Accepted</span>
+
             <strong>
               {
                 applications.filter(
                   (application) =>
-                    application.status === "Accepted"
+                    application.status ===
+                    "Accepted"
                 ).length
               }
             </strong>
@@ -343,11 +432,13 @@ function AdminApplications() {
 
           <div>
             <span>Rejected</span>
+
             <strong>
               {
                 applications.filter(
                   (application) =>
-                    application.status === "Rejected"
+                    application.status ===
+                    "Rejected"
                 ).length
               }
             </strong>
@@ -363,7 +454,9 @@ function AdminApplications() {
             placeholder="Search applicant, email, opportunity or company..."
             value={search}
             onChange={(event) =>
-              setSearch(event.target.value)
+              setSearch(
+                event.target.value
+              )
             }
             className="admin-application-search"
           />
@@ -371,17 +464,31 @@ function AdminApplications() {
           <select
             value={statusFilter}
             onChange={(event) =>
-              setStatusFilter(event.target.value)
+              setStatusFilter(
+                event.target.value
+              )
             }
             className="admin-application-filter"
           >
-            <option value="All">All Statuses</option>
-            <option value="Pending">Pending</option>
-            <option value="Accepted">Accepted</option>
-            <option value="Rejected">Rejected</option>
+            <option value="All">
+              All Statuses
+            </option>
+
+            <option value="Pending">
+              Pending
+            </option>
+
+            <option value="Accepted">
+              Accepted
+            </option>
+
+            <option value="Rejected">
+              Rejected
+            </option>
           </select>
 
-          {(search || statusFilter !== "All") && (
+          {(search ||
+            statusFilter !== "All") && (
             <button
               type="button"
               onClick={clearFilters}
@@ -398,7 +505,9 @@ function AdminApplications() {
           <span>
             Showing{" "}
             <strong>
-              {filteredApplications.length}
+              {
+                filteredApplications.length
+              }
             </strong>{" "}
             of{" "}
             <strong>
@@ -416,11 +525,16 @@ function AdminApplications() {
 
         {/* APPLICATIONS */}
 
-        {filteredApplications.length === 0 ? (
+        {filteredApplications.length ===
+        0 ? (
           <div className="admin-applications-state">
-            <h2>No applications found</h2>
+            <h2>
+              No applications found
+            </h2>
+
             <p>
-              Try changing your search or filter.
+              Try changing your search or
+              filter.
             </p>
           </div>
         ) : (
@@ -428,15 +542,20 @@ function AdminApplications() {
 
             {filteredApplications.map(
               (application) => {
-
                 const applicantName =
-                  getApplicantName(application);
+                  getApplicantName(
+                    application
+                  );
 
                 const applicantEmail =
-                  getApplicantEmail(application);
+                  getApplicantEmail(
+                    application
+                  );
 
                 const opportunityTitle =
-                  getOpportunityTitle(application);
+                  getOpportunityTitle(
+                    application
+                  );
 
                 const company =
                   getCompany(application);
@@ -458,14 +577,21 @@ function AdminApplications() {
                       </div>
 
                       <div className="admin-application-applicant">
-                        <h2>{applicantName}</h2>
-                        <p>{applicantEmail}</p>
+                        <h2>
+                          {applicantName}
+                        </h2>
+
+                        <p>
+                          {applicantEmail}
+                        </p>
                       </div>
 
                       <span
                         className={`admin-application-status status-${application.status.toLowerCase()}`}
                       >
-                        {application.status}
+                        {
+                          application.status
+                        }
                       </span>
 
                     </div>
@@ -491,7 +617,10 @@ function AdminApplications() {
                     <div className="admin-application-meta">
 
                       <div>
-                        <span>Applied</span>
+                        <span>
+                          Applied
+                        </span>
+
                         <strong>
                           {formatDate(
                             application.createdAt
@@ -500,7 +629,10 @@ function AdminApplications() {
                       </div>
 
                       <div>
-                        <span>Application ID</span>
+                        <span>
+                          Application ID
+                        </span>
+
                         <strong>
                           {application._id}
                         </strong>

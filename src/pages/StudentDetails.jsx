@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 
 import useFetch from "../hooks/useFetch";
+import API_URL from "../config/api";
 
 function StudentDetails() {
   const { id } = useParams();
@@ -10,7 +11,7 @@ function StudentDetails() {
     loading,
     error,
   } = useFetch(
-    `http://localhost:5000/api/students/${id}`
+    `${API_URL}/api/students/${id}`
   );
 
   const student = response?.data;
@@ -271,7 +272,10 @@ function StudentDetails() {
 
                 {student.education && (
                   <div className="student-profile-info-item">
-                    <span>Education</span>
+                    <span>
+                      Education
+                    </span>
+
                     <strong>
                       {student.education}
                     </strong>
@@ -280,7 +284,10 @@ function StudentDetails() {
 
                 {student.department && (
                   <div className="student-profile-info-item">
-                    <span>Department</span>
+                    <span>
+                      Department
+                    </span>
+
                     <strong>
                       {student.department}
                     </strong>
@@ -289,7 +296,10 @@ function StudentDetails() {
 
                 {student.location && (
                   <div className="student-profile-info-item">
-                    <span>Location</span>
+                    <span>
+                      Location
+                    </span>
+
                     <strong>
                       {student.location}
                     </strong>
@@ -321,7 +331,9 @@ function StudentDetails() {
                 </div>
 
                 <div>
-                  <span>Email</span>
+                  <span>
+                    Email
+                  </span>
 
                   <strong>
                     {student.email ||

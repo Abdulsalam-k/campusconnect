@@ -7,6 +7,7 @@ import {
 
 import useFetch from "../hooks/useFetch";
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function OpportunityDetails() {
   const { id } = useParams();
@@ -28,7 +29,7 @@ function OpportunityDetails() {
     loading,
     error,
   } = useFetch(
-    `http://localhost:5000/api/opportunities/${id}`
+    `${API_URL}/api/opportunities/${id}`
   );
 
   const opportunity = response?.data;
@@ -64,7 +65,7 @@ function OpportunityDetails() {
         setCheckingSaved(true);
 
         const response = await fetch(
-          "http://localhost:5000/api/saved-opportunities",
+          `${API_URL}/api/saved-opportunities`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -132,7 +133,7 @@ function OpportunityDetails() {
     setSaveError("");
 
     try {
-      const url = `http://localhost:5000/api/saved-opportunities/${opportunity._id}`;
+      const url = `${API_URL}/api/saved-opportunities/${opportunity._id}`;
 
       const response = await fetch(url, {
         method: isSaved ? "DELETE" : "POST",

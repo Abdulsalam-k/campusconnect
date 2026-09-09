@@ -4,7 +4,9 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function RecruiterDashboard() {
   const { token, user } = useAuth();
@@ -15,37 +17,53 @@ function RecruiterDashboard() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const [deletingOpportunityId, setDeletingOpportunityId] =
-    useState(null);
+  const [
+    deletingOpportunityId,
+    setDeletingOpportunityId,
+  ] = useState(null);
 
-  const [updatingApplicationId, setUpdatingApplicationId] =
-    useState(null);
+  const [
+    updatingApplicationId,
+    setUpdatingApplicationId,
+  ] = useState(null);
 
   // ==========================================
   // OPPORTUNITY SEARCH / FILTERS
   // ==========================================
 
-  const [opportunitySearch, setOpportunitySearch] =
-    useState("");
+  const [
+    opportunitySearch,
+    setOpportunitySearch,
+  ] = useState("");
 
-  const [opportunityTypeFilter, setOpportunityTypeFilter] =
-    useState("All");
+  const [
+    opportunityTypeFilter,
+    setOpportunityTypeFilter,
+  ] = useState("All");
 
-  const [opportunityModeFilter, setOpportunityModeFilter] =
-    useState("All");
+  const [
+    opportunityModeFilter,
+    setOpportunityModeFilter,
+  ] = useState("All");
 
   // ==========================================
   // APPLICATION SEARCH / FILTERS
   // ==========================================
 
-  const [applicationSearch, setApplicationSearch] =
-    useState("");
+  const [
+    applicationSearch,
+    setApplicationSearch,
+  ] = useState("");
 
-  const [applicationStatusFilter, setApplicationStatusFilter] =
-    useState("All");
+  const [
+    applicationStatusFilter,
+    setApplicationStatusFilter,
+  ] = useState("All");
 
-  const [applicationOpportunityFilter, setApplicationOpportunityFilter] =
-    useState("All");
+  const [
+    applicationOpportunityFilter,
+    setApplicationOpportunityFilter,
+  ] = useState("All");
 
   // ==========================================
   // SCROLL TO TOP
@@ -69,7 +87,7 @@ function RecruiterDashboard() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/recruiter/dashboard",
+          `${API_URL}/api/recruiter/dashboard`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -114,7 +132,9 @@ function RecruiterDashboard() {
     }
 
     const searchValue =
-      opportunitySearch.trim().toLowerCase();
+      opportunitySearch
+        .trim()
+        .toLowerCase();
 
     return dashboard.opportunities.filter(
       (opportunity) => {
@@ -124,7 +144,9 @@ function RecruiterDashboard() {
           opportunity.category,
           opportunity.location,
           opportunity.description,
-          ...(Array.isArray(opportunity.skills)
+          ...(Array.isArray(
+            opportunity.skills
+          )
             ? opportunity.skills
             : []),
         ]
@@ -134,15 +156,19 @@ function RecruiterDashboard() {
 
         const matchesSearch =
           !searchValue ||
-          searchableText.includes(searchValue);
+          searchableText.includes(
+            searchValue
+          );
 
         const matchesType =
-          opportunityTypeFilter === "All" ||
+          opportunityTypeFilter ===
+            "All" ||
           opportunity.type ===
             opportunityTypeFilter;
 
         const matchesMode =
-          opportunityModeFilter === "All" ||
+          opportunityModeFilter ===
+            "All" ||
           opportunity.mode ===
             opportunityModeFilter;
 
@@ -180,19 +206,23 @@ function RecruiterDashboard() {
     }
 
     const searchValue =
-      applicationSearch.trim().toLowerCase();
+      applicationSearch
+        .trim()
+        .toLowerCase();
 
     return dashboard.applications.filter(
       (application) => {
         const applicant =
           application.userId &&
-          typeof application.userId === "object"
+          typeof application.userId ===
+            "object"
             ? application.userId
             : {};
 
         const opportunity =
           application.opportunityId &&
-          typeof application.opportunityId === "object"
+          typeof application.opportunityId ===
+            "object"
             ? application.opportunityId
             : {};
 
@@ -213,15 +243,19 @@ function RecruiterDashboard() {
 
         const matchesSearch =
           !searchValue ||
-          searchableText.includes(searchValue);
+          searchableText.includes(
+            searchValue
+          );
 
         const matchesStatus =
-          applicationStatusFilter === "All" ||
+          applicationStatusFilter ===
+            "All" ||
           application.status ===
             applicationStatusFilter;
 
         const matchesOpportunity =
-          applicationOpportunityFilter === "All" ||
+          applicationOpportunityFilter ===
+            "All" ||
           opportunity._id ===
             applicationOpportunityFilter;
 
@@ -246,7 +280,9 @@ function RecruiterDashboard() {
   function clearApplicationFilters() {
     setApplicationSearch("");
     setApplicationStatusFilter("All");
-    setApplicationOpportunityFilter("All");
+    setApplicationOpportunityFilter(
+      "All"
+    );
   }
 
   // ==========================================
@@ -260,14 +296,17 @@ function RecruiterDashboard() {
     try {
       setError("");
       setSuccess("");
-      setUpdatingApplicationId(applicationId);
+      setUpdatingApplicationId(
+        applicationId
+      );
 
       const response = await fetch(
-        `http://localhost:5000/api/applications/${applicationId}/status`,
+        `${API_URL}/api/applications/${applicationId}/status`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
@@ -276,7 +315,8 @@ function RecruiterDashboard() {
         }
       );
 
-      const result = await response.json();
+      const result =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(
@@ -285,73 +325,89 @@ function RecruiterDashboard() {
         );
       }
 
-      setDashboard((currentDashboard) => {
-        if (!currentDashboard) {
-          return currentDashboard;
+      setDashboard(
+        (currentDashboard) => {
+          if (!currentDashboard) {
+            return currentDashboard;
+          }
+
+          const previousApplication =
+            currentDashboard.applications.find(
+              (application) =>
+                application._id ===
+                applicationId
+            );
+
+          if (!previousApplication) {
+            return currentDashboard;
+          }
+
+          const previousStatus =
+            previousApplication.status;
+
+          const updatedApplications =
+            currentDashboard.applications.map(
+              (application) =>
+                application._id ===
+                applicationId
+                  ? {
+                      ...application,
+                      status:
+                        result.data
+                          .status,
+                    }
+                  : application
+            );
+
+          const updatedStats = {
+            ...currentDashboard.stats,
+          };
+
+          // Remove previous status count
+
+          if (
+            previousStatus ===
+            "Pending"
+          ) {
+            updatedStats.pending -= 1;
+          }
+
+          if (
+            previousStatus ===
+            "Accepted"
+          ) {
+            updatedStats.accepted -= 1;
+          }
+
+          if (
+            previousStatus ===
+            "Rejected"
+          ) {
+            updatedStats.rejected -= 1;
+          }
+
+          // Add new status count
+
+          if (status === "Pending") {
+            updatedStats.pending += 1;
+          }
+
+          if (status === "Accepted") {
+            updatedStats.accepted += 1;
+          }
+
+          if (status === "Rejected") {
+            updatedStats.rejected += 1;
+          }
+
+          return {
+            ...currentDashboard,
+            applications:
+              updatedApplications,
+            stats: updatedStats,
+          };
         }
-
-        const previousApplication =
-          currentDashboard.applications.find(
-            (application) =>
-              application._id === applicationId
-          );
-
-        if (!previousApplication) {
-          return currentDashboard;
-        }
-
-        const previousStatus =
-          previousApplication.status;
-
-        const updatedApplications =
-          currentDashboard.applications.map(
-            (application) =>
-              application._id === applicationId
-                ? {
-                    ...application,
-                    status: result.data.status,
-                  }
-                : application
-          );
-
-        const updatedStats = {
-          ...currentDashboard.stats,
-        };
-
-        // Remove previous status count
-
-        if (previousStatus === "Pending") {
-          updatedStats.pending -= 1;
-        }
-
-        if (previousStatus === "Accepted") {
-          updatedStats.accepted -= 1;
-        }
-
-        if (previousStatus === "Rejected") {
-          updatedStats.rejected -= 1;
-        }
-
-        // Add new status count
-
-        if (status === "Pending") {
-          updatedStats.pending += 1;
-        }
-
-        if (status === "Accepted") {
-          updatedStats.accepted += 1;
-        }
-
-        if (status === "Rejected") {
-          updatedStats.rejected += 1;
-        }
-
-        return {
-          ...currentDashboard,
-          applications: updatedApplications,
-          stats: updatedStats,
-        };
-      });
+      );
 
       setSuccess(
         `Application ${status.toLowerCase()} successfully.`
@@ -379,9 +435,10 @@ function RecruiterDashboard() {
     opportunityId,
     opportunityTitle
   ) {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${opportunityTitle}"?\n\nThis action cannot be undone.`
-    );
+    const confirmed =
+      window.confirm(
+        `Are you sure you want to delete "${opportunityTitle}"?\n\nThis action cannot be undone.`
+      );
 
     if (!confirmed) {
       return;
@@ -390,10 +447,12 @@ function RecruiterDashboard() {
     try {
       setError("");
       setSuccess("");
-      setDeletingOpportunityId(opportunityId);
+      setDeletingOpportunityId(
+        opportunityId
+      );
 
       const response = await fetch(
-        `http://localhost:5000/api/opportunities/${opportunityId}`,
+        `${API_URL}/api/opportunities/${opportunityId}`,
         {
           method: "DELETE",
           headers: {
@@ -402,7 +461,8 @@ function RecruiterDashboard() {
         }
       );
 
-      const result = await response.json();
+      const result =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(
@@ -411,32 +471,36 @@ function RecruiterDashboard() {
         );
       }
 
-      setDashboard((currentDashboard) => {
-        if (!currentDashboard) {
-          return currentDashboard;
-        }
+      setDashboard(
+        (currentDashboard) => {
+          if (!currentDashboard) {
+            return currentDashboard;
+          }
 
-        return {
-          ...currentDashboard,
+          return {
+            ...currentDashboard,
 
-          opportunities:
-            currentDashboard.opportunities.filter(
-              (opportunity) =>
-                opportunity._id !== opportunityId
-            ),
-
-          stats: {
-            ...currentDashboard.stats,
-
-            totalOpportunities:
-              Math.max(
-                currentDashboard.stats
-                  .totalOpportunities - 1,
-                0
+            opportunities:
+              currentDashboard.opportunities.filter(
+                (opportunity) =>
+                  opportunity._id !==
+                  opportunityId
               ),
-          },
-        };
-      });
+
+            stats: {
+              ...currentDashboard.stats,
+
+              totalOpportunities:
+                Math.max(
+                  currentDashboard.stats
+                    .totalOpportunities -
+                    1,
+                  0
+                ),
+            },
+          };
+        }
+      );
 
       setSuccess(
         `"${opportunityTitle}" was deleted successfully.`
@@ -460,7 +524,9 @@ function RecruiterDashboard() {
   // VIEW APPLICANT
   // ==========================================
 
-  function viewApplicant(applicationId) {
+  function viewApplicant(
+    applicationId
+  ) {
     navigate(
       `/recruiter/applications/${applicationId}`
     );
@@ -490,7 +556,9 @@ function RecruiterDashboard() {
     return (
       <div className="dashboard-page">
         <div className="dashboard-error">
-          <h2>Recruiter Dashboard</h2>
+          <h2>
+            Recruiter Dashboard
+          </h2>
 
           <p>{error}</p>
         </div>
@@ -538,7 +606,9 @@ function RecruiterDashboard() {
 
           <p className="dashboard-welcome">
             Welcome back,{" "}
-            <strong>{user?.name}</strong>.
+            <strong>
+              {user?.name}
+            </strong>.
             Manage your opportunities and
             applications from one place.
           </p>
@@ -548,7 +618,9 @@ function RecruiterDashboard() {
           type="button"
           className="primary-button"
           onClick={() =>
-            navigate("/create-opportunity")
+            navigate(
+              "/create-opportunity"
+            )
           }
         >
           + Create Opportunity
@@ -564,7 +636,9 @@ function RecruiterDashboard() {
         <div className="dashboard-success">
           <strong>✓</strong>
 
-          <span>{success}</span>
+          <span>
+            {success}
+          </span>
         </div>
       )}
 
@@ -590,7 +664,9 @@ function RecruiterDashboard() {
           </div>
 
           <div>
-            <p>Opportunities</p>
+            <p>
+              Opportunities
+            </p>
 
             <h2>
               {stats.totalOpportunities}
@@ -604,7 +680,9 @@ function RecruiterDashboard() {
           </div>
 
           <div>
-            <p>Applications</p>
+            <p>
+              Applications
+            </p>
 
             <h2>
               {stats.totalApplications}
@@ -683,7 +761,9 @@ function RecruiterDashboard() {
             type="button"
             className="secondary-button"
             onClick={() =>
-              navigate("/create-opportunity")
+              navigate(
+                "/create-opportunity"
+              )
             }
           >
             + New Opportunity
@@ -709,7 +789,9 @@ function RecruiterDashboard() {
               />
 
               <select
-                value={opportunityTypeFilter}
+                value={
+                  opportunityTypeFilter
+                }
                 onChange={(event) =>
                   setOpportunityTypeFilter(
                     event.target.value
@@ -738,7 +820,9 @@ function RecruiterDashboard() {
               </select>
 
               <select
-                value={opportunityModeFilter}
+                value={
+                  opportunityModeFilter
+                }
                 onChange={(event) =>
                   setOpportunityModeFilter(
                     event.target.value
@@ -820,7 +904,9 @@ function RecruiterDashboard() {
               type="button"
               className="primary-button"
               onClick={() =>
-                navigate("/create-opportunity")
+                navigate(
+                  "/create-opportunity"
+                )
               }
             >
               Create Opportunity
@@ -856,7 +942,6 @@ function RecruiterDashboard() {
 
             {filteredOpportunities.map(
               (opportunity) => {
-
                 const opportunityApplications =
                   applications.filter(
                     (application) =>
@@ -1016,7 +1101,9 @@ function RecruiterDashboard() {
               />
 
               <select
-                value={applicationStatusFilter}
+                value={
+                  applicationStatusFilter
+                }
                 onChange={(event) =>
                   setApplicationStatusFilter(
                     event.target.value
@@ -1090,7 +1177,9 @@ function RecruiterDashboard() {
               <p>
                 Showing{" "}
                 <strong>
-                  {filteredApplications.length}
+                  {
+                    filteredApplications.length
+                  }
                 </strong>{" "}
                 of{" "}
                 <strong>
@@ -1149,7 +1238,6 @@ function RecruiterDashboard() {
 
             {filteredApplications.map(
               (application) => {
-
                 const applicant =
                   application.userId;
 
@@ -1187,7 +1275,9 @@ function RecruiterDashboard() {
                       <span
                         className={`status-badge status-${application.status.toLowerCase()}`}
                       >
-                        {application.status}
+                        {
+                          application.status
+                        }
                       </span>
 
                     </div>
@@ -1259,7 +1349,9 @@ function RecruiterDashboard() {
                               "Accepted"
                             )
                           }
-                          disabled={isUpdating}
+                          disabled={
+                            isUpdating
+                          }
                         >
                           {isUpdating
                             ? "Updating..."
@@ -1275,7 +1367,9 @@ function RecruiterDashboard() {
                               "Rejected"
                             )
                           }
-                          disabled={isUpdating}
+                          disabled={
+                            isUpdating
+                          }
                         >
                           {isUpdating
                             ? "Updating..."

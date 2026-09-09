@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+} from "react-router-dom";
 import { FiEye } from "react-icons/fi";
+
+import API_URL from "../config/api";
 
 function Register() {
   const navigate = useNavigate();
@@ -15,8 +20,10 @@ function Register() {
   const [showPassword, setShowPassword] =
     useState(false);
 
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState(false);
+  const [
+    showConfirmPassword,
+    setShowConfirmPassword,
+  ] = useState(false);
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -93,7 +100,8 @@ function Register() {
     };
   }
 
-  const passwordStrength = getPasswordStrength();
+  const passwordStrength =
+    getPasswordStrength();
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -109,7 +117,10 @@ function Register() {
       !formData.password ||
       !formData.confirmPassword
     ) {
-      setError("All fields are required.");
+      setError(
+        "All fields are required."
+      );
+
       return;
     }
 
@@ -117,6 +128,7 @@ function Register() {
       setError(
         "Full name must be at least 2 characters."
       );
+
       return;
     }
 
@@ -124,11 +136,18 @@ function Register() {
       setError(
         "Password must be at least 6 characters."
       );
+
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
+    if (
+      formData.password !==
+      formData.confirmPassword
+    ) {
+      setError(
+        "Passwords do not match."
+      );
+
       return;
     }
 
@@ -136,25 +155,29 @@ function Register() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:5000/api/auth/register",
+        `${API_URL}/api/auth/register`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
           },
           body: JSON.stringify({
             name,
             email,
-            password: formData.password,
+            password:
+              formData.password,
           }),
         }
       );
 
-      const result = await response.json();
+      const result =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(
-          result.message || "Registration failed."
+          result.message ||
+            "Registration failed."
         );
       }
 
@@ -201,7 +224,9 @@ function Register() {
           students, talent and opportunities.
         </p>
 
-        <form onSubmit={handleSubmit}>
+        <form
+          onSubmit={handleSubmit}
+        >
 
           {/* FULL NAME */}
 
@@ -215,7 +240,9 @@ function Register() {
               name="name"
               type="text"
               value={formData.name}
-              onChange={handleChange}
+              onChange={
+                handleChange
+              }
               placeholder="Enter your full name"
               autoComplete="name"
             />
@@ -233,7 +260,9 @@ function Register() {
               name="email"
               type="email"
               value={formData.email}
-              onChange={handleChange}
+              onChange={
+                handleChange
+              }
               placeholder="Enter your email"
               autoComplete="email"
             />
@@ -255,8 +284,12 @@ function Register() {
                     ? "text"
                     : "password"
                 }
-                value={formData.password}
-                onChange={handleChange}
+                value={
+                  formData.password
+                }
+                onChange={
+                  handleChange
+                }
                 placeholder="Create a password"
                 autoComplete="new-password"
               />
@@ -270,7 +303,8 @@ function Register() {
                 }`}
                 onClick={() =>
                   setShowPassword(
-                    (current) => !current
+                    (current) =>
+                      !current
                   )
                 }
                 aria-label={
@@ -292,13 +326,18 @@ function Register() {
 
             {formData.password && (
               <div className="password-strength">
+
                 <div className="password-strength-header">
-                  <span>Password strength</span>
+                  <span>
+                    Password strength
+                  </span>
 
                   <strong
                     className={`password-strength-label level-${passwordStrength.level}`}
                   >
-                    {passwordStrength.label}
+                    {
+                      passwordStrength.label
+                    }
                   </strong>
                 </div>
 
@@ -347,7 +386,9 @@ function Register() {
                 value={
                   formData.confirmPassword
                 }
-                onChange={handleChange}
+                onChange={
+                  handleChange
+                }
                 placeholder="Confirm your password"
                 autoComplete="new-password"
               />
@@ -361,7 +402,8 @@ function Register() {
                 }`}
                 onClick={() =>
                   setShowConfirmPassword(
-                    (current) => !current
+                    (current) =>
+                      !current
                   )
                 }
                 aria-label={
@@ -417,6 +459,7 @@ function Register() {
               ? "Creating account..."
               : "Create Account"}
           </button>
+
         </form>
 
         {/* LOGIN LINK */}
@@ -440,4 +483,3 @@ function Register() {
 }
 
 export default Register;
-

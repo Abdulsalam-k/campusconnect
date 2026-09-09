@@ -6,6 +6,7 @@ import {
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function SavedOpportunities() {
   const { token } = useAuth();
@@ -48,7 +49,7 @@ function SavedOpportunities() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/saved-opportunities",
+          `${API_URL}/api/saved-opportunities`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -260,7 +261,7 @@ function SavedOpportunities() {
       setError("");
 
       const response = await fetch(
-        `http://localhost:5000/api/saved-opportunities/${opportunityId}`,
+        `${API_URL}/api/saved-opportunities/${opportunityId}`,
         {
           method: "DELETE",
           headers: {
@@ -269,7 +270,8 @@ function SavedOpportunities() {
         }
       );
 
-      const result = await response.json();
+      const result =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(
@@ -464,6 +466,7 @@ function SavedOpportunities() {
                   </option>
                 )
               )}
+
             </select>
 
             {/* MODE */}
@@ -490,6 +493,7 @@ function SavedOpportunities() {
                   </option>
                 )
               )}
+
             </select>
 
             {/* SORT */}

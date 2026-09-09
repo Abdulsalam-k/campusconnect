@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+} from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function EditOpportunity() {
   const { id } = useParams();
@@ -35,7 +40,7 @@ function EditOpportunity() {
         setError("");
 
         const response = await fetch(
-          `http://localhost:5000/api/opportunities/${id}`
+          `${API_URL}/api/opportunities/${id}`
         );
 
         const result = await response.json();
@@ -52,15 +57,23 @@ function EditOpportunity() {
         setFormData({
           title: opportunity.title || "",
           company: opportunity.company || "",
-          description: opportunity.description || "",
-          type: opportunity.type || "Internship",
-          location: opportunity.location || "",
-          mode: opportunity.mode || "Remote",
-          category: opportunity.category || "",
-          skills: Array.isArray(opportunity.skills)
+          description:
+            opportunity.description || "",
+          type:
+            opportunity.type || "Internship",
+          location:
+            opportunity.location || "",
+          mode:
+            opportunity.mode || "Remote",
+          category:
+            opportunity.category || "",
+          skills: Array.isArray(
+            opportunity.skills
+          )
             ? opportunity.skills.join(", ")
             : "",
-          deadline: opportunity.deadline || "",
+          deadline:
+            opportunity.deadline || "",
         });
       } catch (error) {
         console.error(
@@ -97,9 +110,12 @@ function EditOpportunity() {
   function validateForm() {
     const title = formData.title.trim();
     const company = formData.company.trim();
-    const description = formData.description.trim();
-    const location = formData.location.trim();
-    const category = formData.category.trim();
+    const description =
+      formData.description.trim();
+    const location =
+      formData.location.trim();
+    const category =
+      formData.category.trim();
 
     const skills = formData.skills
       .split(",")
@@ -181,7 +197,8 @@ function EditOpportunity() {
     setError("");
     setSuccess("");
 
-    const validationError = validateForm();
+    const validationError =
+      validateForm();
 
     if (validationError) {
       setError(validationError);
@@ -194,36 +211,44 @@ function EditOpportunity() {
     try {
       setSaving(true);
 
-      const cleanedSkills = formData.skills
-        .split(",")
-        .map((skill) => skill.trim())
-        .filter(Boolean);
+      const cleanedSkills =
+        formData.skills
+          .split(",")
+          .map((skill) => skill.trim())
+          .filter(Boolean);
 
       const opportunityData = {
         title: formData.title.trim(),
         company: formData.company.trim(),
-        description: formData.description.trim(),
+        description:
+          formData.description.trim(),
         type: formData.type,
-        location: formData.location.trim(),
+        location:
+          formData.location.trim(),
         mode: formData.mode,
-        category: formData.category.trim(),
+        category:
+          formData.category.trim(),
         skills: cleanedSkills,
         deadline: formData.deadline,
       };
 
       const response = await fetch(
-        `http://localhost:5000/api/opportunities/${id}`,
+        `${API_URL}/api/opportunities/${id}`,
         {
           method: "PUT",
           headers: {
-            "Content-Type": "application/json",
+            "Content-Type":
+              "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(opportunityData),
+          body: JSON.stringify(
+            opportunityData
+          ),
         }
       );
 
-      const result = await response.json();
+      const result =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(
@@ -240,14 +265,18 @@ function EditOpportunity() {
         Return the user to the top of the page
         so the success message is immediately visible.
       */
+
       scrollToTop();
 
       /*
         Give the user enough time to clearly see
         the success message before redirecting.
       */
+
       setTimeout(() => {
-        navigate("/recruiter-dashboard");
+        navigate(
+          "/recruiter-dashboard"
+        );
       }, 3000);
     } catch (error) {
       console.error(
@@ -274,14 +303,18 @@ function EditOpportunity() {
     return (
       <div className="opportunity-form-page">
         <div className="opportunity-form-container">
+
           <div className="dashboard-loading">
-            <h2>Loading opportunity...</h2>
+            <h2>
+              Loading opportunity...
+            </h2>
 
             <p>
-              Please wait while we retrieve the
-              opportunity details.
+              Please wait while we retrieve
+              the opportunity details.
             </p>
           </div>
+
         </div>
       </div>
     );
@@ -291,12 +324,18 @@ function EditOpportunity() {
   // FETCH ERROR
   // ==========================================
 
-  if (error && !formData.title) {
+  if (
+    error &&
+    !formData.title
+  ) {
     return (
       <div className="opportunity-form-page">
         <div className="opportunity-form-container">
+
           <div className="dashboard-error">
-            <h2>Edit Opportunity</h2>
+            <h2>
+              Edit Opportunity
+            </h2>
 
             <p>{error}</p>
 
@@ -304,12 +343,15 @@ function EditOpportunity() {
               type="button"
               className="primary-button"
               onClick={() =>
-                navigate("/recruiter-dashboard")
+                navigate(
+                  "/recruiter-dashboard"
+                )
               }
             >
               Back to Dashboard
             </button>
           </div>
+
         </div>
       </div>
     );
@@ -332,11 +374,13 @@ function EditOpportunity() {
             RECRUITER PORTAL
           </p>
 
-          <h1>Edit Opportunity</h1>
+          <h1>
+            Edit Opportunity
+          </h1>
 
           <p>
-            Update the details of your CampusConnect
-            opportunity.
+            Update the details of your
+            CampusConnect opportunity.
           </p>
         </div>
 
@@ -374,11 +418,13 @@ function EditOpportunity() {
           <div className="form-section">
 
             <div className="form-section-heading">
-              <h2>Basic Information</h2>
+              <h2>
+                Basic Information
+              </h2>
 
               <p>
-                Update the main information about
-                this opportunity.
+                Update the main information
+                about this opportunity.
               </p>
             </div>
 
@@ -471,11 +517,14 @@ function EditOpportunity() {
           <div className="form-section">
 
             <div className="form-section-heading">
-              <h2>Opportunity Details</h2>
+              <h2>
+                Opportunity Details
+              </h2>
 
               <p>
-                Keep the opportunity information
-                accurate and up to date.
+                Keep the opportunity
+                information accurate and up
+                to date.
               </p>
             </div>
 
@@ -601,7 +650,8 @@ function EditOpportunity() {
               />
 
               <small>
-                Separate each skill with a comma.
+                Separate each skill with a
+                comma.
               </small>
             </div>
 
@@ -617,7 +667,9 @@ function EditOpportunity() {
               type="button"
               className="form-cancel-button"
               onClick={() =>
-                navigate("/recruiter-dashboard")
+                navigate(
+                  "/recruiter-dashboard"
+                )
               }
               disabled={saving}
             >

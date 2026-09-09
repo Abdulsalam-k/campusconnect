@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 import { useAuth } from "../context/AuthContext";
 import { useNotifications } from "../context/NotificationContext";
+import API_URL from "../config/api";
 
 function Apply() {
   const { id } = useParams();
@@ -20,7 +21,7 @@ function Apply() {
     loading: opportunityLoading,
     error: opportunityError,
   } = useFetch(
-    `http://localhost:5000/api/opportunities/${id}`
+    `${API_URL}/api/opportunities/${id}`
   );
 
   const opportunity = response?.data;
@@ -118,7 +119,8 @@ function Apply() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const validationErrors = validateForm();
+    const validationErrors =
+      validateForm();
 
     if (
       Object.keys(validationErrors).length > 0
@@ -147,7 +149,7 @@ function Apply() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/applications",
+        `${API_URL}/api/applications`,
         {
           method: "POST",
           headers: {
@@ -156,7 +158,8 @@ function Apply() {
           },
           body: JSON.stringify({
             opportunityId: opportunity._id,
-            fullName: formData.fullName.trim(),
+            fullName:
+              formData.fullName.trim(),
             email: formData.email
               .trim()
               .toLowerCase(),
@@ -167,7 +170,8 @@ function Apply() {
         }
       );
 
-      const result = await response.json();
+      const result =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(
@@ -273,7 +277,6 @@ function Apply() {
         </p>
 
         <div className="success-actions">
-
           <Link
             to="/applications"
             className="primary-button"
@@ -287,7 +290,6 @@ function Apply() {
           >
             Explore More Opportunities
           </Link>
-
         </div>
       </div>
     );
@@ -315,7 +317,6 @@ function Apply() {
         ======================================= */}
 
         <section className="application-form-container">
-
           <p className="page-label">
             APPLICATION
           </p>
@@ -333,7 +334,6 @@ function Apply() {
 
             {/* FULL NAME */}
             <div className="form-group">
-
               <label htmlFor="fullName">
                 Full Name
               </label>
@@ -342,7 +342,9 @@ function Apply() {
                 id="fullName"
                 name="fullName"
                 type="text"
-                value={formData.fullName}
+                value={
+                  formData.fullName
+                }
                 onChange={handleChange}
                 placeholder="Enter your full name"
               />
@@ -352,12 +354,10 @@ function Apply() {
                   {errors.fullName}
                 </p>
               )}
-
             </div>
 
             {/* EMAIL */}
             <div className="form-group">
-
               <label htmlFor="email">
                 Email Address
               </label>
@@ -366,7 +366,9 @@ function Apply() {
                 id="email"
                 name="email"
                 type="email"
-                value={formData.email}
+                value={
+                  formData.email
+                }
                 disabled
               />
 
@@ -380,12 +382,10 @@ function Apply() {
                   {errors.email}
                 </p>
               )}
-
             </div>
 
             {/* PHONE */}
             <div className="form-group">
-
               <label htmlFor="phone">
                 Phone Number
               </label>
@@ -394,7 +394,9 @@ function Apply() {
                 id="phone"
                 name="phone"
                 type="tel"
-                value={formData.phone}
+                value={
+                  formData.phone
+                }
                 onChange={handleChange}
                 placeholder="Enter your phone number"
               />
@@ -404,12 +406,10 @@ function Apply() {
                   {errors.phone}
                 </p>
               )}
-
             </div>
 
             {/* COVER LETTER */}
             <div className="form-group">
-
               <label htmlFor="coverLetter">
                 Cover Letter
               </label>
@@ -417,7 +417,9 @@ function Apply() {
               <textarea
                 id="coverLetter"
                 name="coverLetter"
-                value={formData.coverLetter}
+                value={
+                  formData.coverLetter
+                }
                 onChange={handleChange}
                 placeholder="Tell the company why you're a good fit..."
                 rows="7"
@@ -428,7 +430,6 @@ function Apply() {
                   {errors.coverLetter}
                 </p>
               )}
-
             </div>
 
             {/* API ERROR */}
@@ -448,9 +449,7 @@ function Apply() {
                 ? "Submitting..."
                 : "Submit Application"}
             </button>
-
           </form>
-
         </section>
 
         {/* ======================================
@@ -458,7 +457,6 @@ function Apply() {
         ======================================= */}
 
         <aside className="application-summary">
-
           <p className="page-label">
             OPPORTUNITY
           </p>
@@ -472,7 +470,6 @@ function Apply() {
           </p>
 
           <div className="summary-details">
-
             <span>
               📍 {opportunity.location}
             </span>
@@ -488,11 +485,9 @@ function Apply() {
             <span>
               🏷️ {opportunity.category}
             </span>
-
           </div>
 
           <div className="summary-deadline">
-
             <span>
               Application deadline
             </span>
@@ -500,9 +495,7 @@ function Apply() {
             <strong>
               {opportunity.deadline}
             </strong>
-
           </div>
-
         </aside>
 
       </div>

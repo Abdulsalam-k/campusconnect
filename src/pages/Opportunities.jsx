@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import OpportunityCard from "../components/OpportunityCard";
 import useFetch from "../hooks/useFetch";
+import API_URL from "../config/api";
 
 function Opportunities() {
   const [search, setSearch] = useState("");
@@ -13,7 +14,9 @@ function Opportunities() {
     data: response,
     loading,
     error,
-  } = useFetch("http://localhost:5000/api/opportunities");
+  } = useFetch(
+    `${API_URL}/api/opportunities`
+  );
 
   const opportunities = response?.data || [];
 
@@ -50,50 +53,57 @@ function Opportunities() {
 
   // SEARCH + FILTER
   const filteredOpportunities = useMemo(() => {
-    const searchValue = search.trim().toLowerCase();
+    const searchValue =
+      search.trim().toLowerCase();
 
-    return opportunities.filter((opportunity) => {
-      const skills = Array.isArray(opportunity.skills)
-        ? opportunity.skills
-        : [];
+    return opportunities.filter(
+      (opportunity) => {
+        const skills = Array.isArray(
+          opportunity.skills
+        )
+          ? opportunity.skills
+          : [];
 
-      const searchableText = [
-        opportunity.title,
-        opportunity.company,
-        opportunity.category,
-        opportunity.location,
-        opportunity.mode,
-        opportunity.type,
-        opportunity.description,
-        ...skills,
-      ]
-        .filter(Boolean)
-        .join(" ")
-        .toLowerCase();
+        const searchableText = [
+          opportunity.title,
+          opportunity.company,
+          opportunity.category,
+          opportunity.location,
+          opportunity.mode,
+          opportunity.type,
+          opportunity.description,
+          ...skills,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
 
-      const matchesSearch =
-        !searchValue ||
-        searchableText.includes(searchValue);
+        const matchesSearch =
+          !searchValue ||
+          searchableText.includes(
+            searchValue
+          );
 
-      const matchesCategory =
-        category === "All" ||
-        opportunity.category === category;
+        const matchesCategory =
+          category === "All" ||
+          opportunity.category === category;
 
-      const matchesType =
-        type === "All" ||
-        opportunity.type === type;
+        const matchesType =
+          type === "All" ||
+          opportunity.type === type;
 
-      const matchesMode =
-        mode === "All" ||
-        opportunity.mode === mode;
+        const matchesMode =
+          mode === "All" ||
+          opportunity.mode === mode;
 
-      return (
-        matchesSearch &&
-        matchesCategory &&
-        matchesType &&
-        matchesMode
-      );
-    });
+        return (
+          matchesSearch &&
+          matchesCategory &&
+          matchesType &&
+          matchesMode
+        );
+      }
+    );
   }, [
     opportunities,
     search,
@@ -258,7 +268,10 @@ function Opportunities() {
           filteredOpportunities.map(
             (opportunity) => (
               <OpportunityCard
-                key={opportunity._id || opportunity.id}
+                key={
+                  opportunity._id ||
+                  opportunity.id
+                }
                 opportunity={opportunity}
               />
             )

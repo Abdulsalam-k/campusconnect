@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function CreateOpportunity() {
   const { token } = useAuth();
@@ -143,7 +145,7 @@ function CreateOpportunity() {
       };
 
       const response = await fetch(
-        "http://localhost:5000/api/opportunities",
+        `${API_URL}/api/opportunities`,
         {
           method: "POST",
           headers: {

@@ -6,6 +6,7 @@ import {
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function Applications() {
   const { token } = useAuth();
@@ -45,7 +46,7 @@ function Applications() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/applications/my",
+          `${API_URL}/api/applications/my`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -62,7 +63,9 @@ function Applications() {
           );
         }
 
-        setApplications(result.data || []);
+        setApplications(
+          result.data || []
+        );
       } catch (error) {
         console.error(
           "Fetching applications error:",
@@ -115,137 +118,148 @@ function Applications() {
   // OPPORTUNITY FILTER OPTIONS
   // ==========================================
 
-  const availableOpportunities = useMemo(() => {
-    const opportunities = applications
-      .map(
-        (application) =>
-          application.opportunityId
-      )
-      .filter(
-        (opportunity) =>
-          opportunity &&
-          typeof opportunity === "object" &&
-          opportunity._id
+  const availableOpportunities =
+    useMemo(() => {
+      const opportunities = applications
+        .map(
+          (application) =>
+            application.opportunityId
+        )
+        .filter(
+          (opportunity) =>
+            opportunity &&
+            typeof opportunity === "object" &&
+            opportunity._id
+        );
+
+      const uniqueOpportunities = [];
+
+      const seenIds = new Set();
+
+      opportunities.forEach(
+        (opportunity) => {
+          if (
+            !seenIds.has(
+              opportunity._id
+            )
+          ) {
+            seenIds.add(
+              opportunity._id
+            );
+
+            uniqueOpportunities.push(
+              opportunity
+            );
+          }
+        }
       );
 
-    const uniqueOpportunities = [];
-
-    const seenIds = new Set();
-
-    opportunities.forEach(
-      (opportunity) => {
-        if (!seenIds.has(opportunity._id)) {
-          seenIds.add(opportunity._id);
-          uniqueOpportunities.push(
-            opportunity
-          );
-        }
-      }
-    );
-
-    return uniqueOpportunities.sort(
-      (first, second) =>
-        (first.title || "").localeCompare(
-          second.title || ""
-        )
-    );
-  }, [applications]);
+      return uniqueOpportunities.sort(
+        (first, second) =>
+          (first.title || "").localeCompare(
+            second.title || ""
+          )
+      );
+    }, [applications]);
 
   // ==========================================
   // FILTER + SORT APPLICATIONS
   // ==========================================
 
-  const filteredApplications = useMemo(() => {
-    const searchValue =
-      search.trim().toLowerCase();
+  const filteredApplications =
+    useMemo(() => {
+      const searchValue =
+        search.trim().toLowerCase();
 
-    const filtered = applications.filter(
-      (application) => {
-        const opportunity =
-          application.opportunityId &&
-          typeof application.opportunityId ===
-            "object"
-            ? application.opportunityId
-            : null;
+      const filtered =
+        applications.filter(
+          (application) => {
+            const opportunity =
+              application.opportunityId &&
+              typeof application.opportunityId ===
+                "object"
+                ? application.opportunityId
+                : null;
 
-        const searchableText = [
-          application.fullName,
-          application.email,
-          application.phone,
-          application.coverLetter,
-          application.status,
-          opportunity?.title,
-          opportunity?.company,
-          opportunity?.category,
-          opportunity?.location,
-          opportunity?.type,
-          opportunity?.mode,
-        ]
-          .filter(Boolean)
-          .join(" ")
-          .toLowerCase();
+            const searchableText = [
+              application.fullName,
+              application.email,
+              application.phone,
+              application.coverLetter,
+              application.status,
+              opportunity?.title,
+              opportunity?.company,
+              opportunity?.category,
+              opportunity?.location,
+              opportunity?.type,
+              opportunity?.mode,
+            ]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
 
-        const matchesSearch =
-          !searchValue ||
-          searchableText.includes(
-            searchValue
-          );
+            const matchesSearch =
+              !searchValue ||
+              searchableText.includes(
+                searchValue
+              );
 
-        const matchesStatus =
-          statusFilter === "All" ||
-          application.status === statusFilter;
+            const matchesStatus =
+              statusFilter === "All" ||
+              application.status ===
+                statusFilter;
 
-        const matchesOpportunity =
-          opportunityFilter === "All" ||
-          opportunity?._id ===
-            opportunityFilter;
+            const matchesOpportunity =
+              opportunityFilter === "All" ||
+              opportunity?._id ===
+                opportunityFilter;
 
-        return (
-          matchesSearch &&
-          matchesStatus &&
-          matchesOpportunity
+            return (
+              matchesSearch &&
+              matchesStatus &&
+              matchesOpportunity
+            );
+          }
         );
-      }
-    );
 
-    // ========================================
-    // SORT
-    // ========================================
+      // ========================================
+      // SORT
+      // ========================================
 
-    return [...filtered].sort(
-      (first, second) => {
-        if (sortBy === "newest") {
-          return (
-            new Date(
-              second.createdAt || 0
-            ) -
-            new Date(
-              first.createdAt || 0
-            )
-          );
+      return [...filtered].sort(
+        (first, second) => {
+          if (sortBy === "newest") {
+            return (
+              new Date(
+                second.createdAt || 0
+              ) -
+              new Date(
+                first.createdAt || 0
+              )
+            );
+          }
+
+          if (sortBy === "oldest") {
+            return (
+              new Date(
+                first.createdAt || 0
+              ) -
+              new Date(
+                second.createdAt || 0
+              )
+            );
+          }
+
+          return 0;
         }
-
-        if (sortBy === "oldest") {
-          return (
-            new Date(
-              first.createdAt || 0
-            ) -
-            new Date(
-              second.createdAt || 0
-            )
-          );
-        }
-
-        return 0;
-      }
-    );
-  }, [
-    applications,
-    search,
-    statusFilter,
-    opportunityFilter,
-    sortBy,
-  ]);
+      );
+    }, [
+      applications,
+      search,
+      statusFilter,
+      opportunityFilter,
+      sortBy,
+    ]);
 
   // ==========================================
   // CLEAR FILTERS
@@ -279,7 +293,11 @@ function Applications() {
 
     const date = new Date(dateValue);
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+      Number.isNaN(
+        date.getTime()
+      )
+    ) {
       return "Date unavailable";
     }
 
@@ -505,6 +523,7 @@ function Applications() {
                 <option value="Rejected">
                   Rejected
                 </option>
+
               </select>
             </div>
 
@@ -531,8 +550,12 @@ function Applications() {
                 {availableOpportunities.map(
                   (opportunity) => (
                     <option
-                      key={opportunity._id}
-                      value={opportunity._id}
+                      key={
+                        opportunity._id
+                      }
+                      value={
+                        opportunity._id
+                      }
                     >
                       {opportunity.title}
                     </option>
@@ -565,6 +588,7 @@ function Applications() {
                 <option value="oldest">
                   Oldest First
                 </option>
+
               </select>
             </div>
 
@@ -639,7 +663,9 @@ function Applications() {
 
                   return (
                     <article
-                      key={application._id}
+                      key={
+                        application._id
+                      }
                       className="application-card"
                     >
 
@@ -682,9 +708,7 @@ function Applications() {
                       <div className="application-status-tracker">
 
                         <div
-                          className={
-                            "tracker-step active"
-                          }
+                          className="tracker-step active"
                         >
                           <span>
                             1
@@ -769,21 +793,27 @@ function Applications() {
                           {opportunity.location && (
                             <span>
                               📍{" "}
-                              {opportunity.location}
+                              {
+                                opportunity.location
+                              }
                             </span>
                           )}
 
                           {opportunity.type && (
                             <span>
                               💼{" "}
-                              {opportunity.type}
+                              {
+                                opportunity.type
+                              }
                             </span>
                           )}
 
                           {opportunity.mode && (
                             <span>
                               🌐{" "}
-                              {opportunity.mode}
+                              {
+                                opportunity.mode
+                              }
                             </span>
                           )}
 
@@ -804,8 +834,10 @@ function Applications() {
                             </span>
 
                             <strong>
-                              {application.fullName ||
-                                "Not provided"}
+                              {
+                                application.fullName ||
+                                "Not provided"
+                              }
                             </strong>
                           </div>
 
@@ -815,8 +847,10 @@ function Applications() {
                             </span>
 
                             <strong>
-                              {application.email ||
-                                "Not provided"}
+                              {
+                                application.email ||
+                                "Not provided"
+                              }
                             </strong>
                           </div>
 
@@ -826,8 +860,10 @@ function Applications() {
                             </span>
 
                             <strong>
-                              {application.phone ||
-                                "Not provided"}
+                              {
+                                application.phone ||
+                                "Not provided"
+                              }
                             </strong>
                           </div>
 
@@ -837,7 +873,9 @@ function Applications() {
                             </span>
 
                             <strong>
-                              {submittedDate}
+                              {
+                                submittedDate
+                              }
                             </strong>
                           </div>
 
@@ -847,7 +885,9 @@ function Applications() {
                             </span>
 
                             <strong>
-                              {updatedDate}
+                              {
+                                updatedDate
+                              }
                             </strong>
                           </div>
 
@@ -857,8 +897,10 @@ function Applications() {
                             </span>
 
                             <strong>
-                              {opportunity?.deadline ||
-                                "Not available"}
+                              {
+                                opportunity?.deadline ||
+                                "Not available"
+                              }
                             </strong>
                           </div>
 
@@ -875,8 +917,10 @@ function Applications() {
                           </span>
 
                           <p>
-                            {application.coverLetter ||
-                              "No cover letter provided."}
+                            {
+                              application.coverLetter ||
+                              "No cover letter provided."
+                            }
                           </p>
 
                         </div>

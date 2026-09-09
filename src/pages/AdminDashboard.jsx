@@ -6,6 +6,7 @@ import {
 import { Link } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
+import API_URL from "../config/api";
 
 function AdminDashboard() {
   const { token, user } = useAuth();
@@ -47,7 +48,7 @@ function AdminDashboard() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/admin/dashboard",
+          `${API_URL}/api/admin/dashboard`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -94,7 +95,7 @@ function AdminDashboard() {
         setUsersError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/admin/users",
+          `${API_URL}/api/admin/users`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -224,7 +225,7 @@ function AdminDashboard() {
       setUsersError("");
 
       const response = await fetch(
-        `http://localhost:5000/api/admin/users/${userId}/role`,
+        `${API_URL}/api/admin/users/${userId}/role`,
         {
           method: "PUT",
           headers: {
@@ -355,7 +356,7 @@ function AdminDashboard() {
       setUsersError("");
 
       const response = await fetch(
-        `http://localhost:5000/api/admin/users/${userId}/status`,
+        `${API_URL}/api/admin/users/${userId}/status`,
         {
           method: "PUT",
           headers: {

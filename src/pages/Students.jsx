@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 
 import TalentCard from "../components/TalentCard";
 import useFetch from "../hooks/useFetch";
+import API_URL from "../config/api";
 
 function Students() {
   const [search, setSearch] = useState("");
@@ -19,7 +20,7 @@ function Students() {
     data: response,
     loading,
     error,
-  } = useFetch("http://localhost:5000/api/students");
+  } = useFetch(`${API_URL}/api/students`);
 
   const talents = response?.data || [];
 
@@ -247,6 +248,7 @@ function Students() {
     }
 
     setCurrentPage(page);
+
     window.scrollTo({
       top: 0,
       behavior: "smooth",
@@ -310,6 +312,7 @@ function Students() {
                   key={index}
                 >
                   <div className="students-loading-avatar"></div>
+
                   <div className="students-loading-content">
                     <div className="students-skeleton-line"></div>
                     <div className="students-skeleton-line"></div>

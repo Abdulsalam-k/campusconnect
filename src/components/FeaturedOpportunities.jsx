@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+import API_URL from "../config/api";
+
 function FeaturedOpportunities() {
   const [opportunities, setOpportunities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -13,7 +15,7 @@ function FeaturedOpportunities() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/opportunities"
+          `${API_URL}/api/opportunities`
         );
 
         const result = await response.json();
@@ -73,9 +75,10 @@ function FeaturedOpportunities() {
   }
 
   function getOpportunityTypeClass(type) {
-    return type
-      ?.toLowerCase()
-      .replace(/\s+/g, "-") || "";
+    return (
+      type?.toLowerCase().replace(/\s+/g, "-") ||
+      ""
+    );
   }
 
   return (
@@ -201,9 +204,7 @@ function FeaturedOpportunities() {
                       {opportunity.skills
                         .slice(0, 4)
                         .map((skill) => (
-                          <span
-                            key={skill}
-                          >
+                          <span key={skill}>
                             {skill}
                           </span>
                         ))}

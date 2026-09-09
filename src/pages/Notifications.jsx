@@ -6,6 +6,7 @@ import {
 
 import { useAuth } from "../context/AuthContext";
 import { useNotifications } from "../context/NotificationContext";
+import API_URL from "../config/api";
 
 function Notifications() {
   const { token } = useAuth();
@@ -49,7 +50,7 @@ function Notifications() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5000/api/notifications",
+          `${API_URL}/api/notifications`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -57,7 +58,8 @@ function Notifications() {
           }
         );
 
-        const result = await response.json();
+        const result =
+          await response.json();
 
         if (!response.ok) {
           throw new Error(
@@ -133,82 +135,83 @@ function Notifications() {
   // FILTER + SORT NOTIFICATIONS
   // ==========================================
 
-  const filteredNotifications = useMemo(() => {
-    const searchValue =
-      search.trim().toLowerCase();
+  const filteredNotifications =
+    useMemo(() => {
+      const searchValue =
+        search.trim().toLowerCase();
 
-    const filtered =
-      notifications.filter(
-        (notification) => {
-          const searchableText = [
-            notification.title,
-            notification.message,
-            notification.type,
-          ]
-            .filter(Boolean)
-            .join(" ")
-            .toLowerCase();
+      const filtered =
+        notifications.filter(
+          (notification) => {
+            const searchableText = [
+              notification.title,
+              notification.message,
+              notification.type,
+            ]
+              .filter(Boolean)
+              .join(" ")
+              .toLowerCase();
 
-          const matchesSearch =
-            !searchValue ||
-            searchableText.includes(
-              searchValue
+            const matchesSearch =
+              !searchValue ||
+              searchableText.includes(
+                searchValue
+              );
+
+            const matchesReadStatus =
+              filter === "All" ||
+              (filter === "Unread" &&
+                !notification.isRead) ||
+              (filter === "Read" &&
+                notification.isRead);
+
+            const matchesType =
+              typeFilter === "All" ||
+              notification.type ===
+                typeFilter;
+
+            return (
+              matchesSearch &&
+              matchesReadStatus &&
+              matchesType
             );
+          }
+        );
 
-          const matchesReadStatus =
-            filter === "All" ||
-            (filter === "Unread" &&
-              !notification.isRead) ||
-            (filter === "Read" &&
-              notification.isRead);
+      return [...filtered].sort(
+        (first, second) => {
+          if (sortBy === "newest") {
+            return (
+              new Date(
+                second.createdAt || 0
+              ) -
+              new Date(
+                first.createdAt || 0
+              )
+            );
+          }
 
-          const matchesType =
-            typeFilter === "All" ||
-            notification.type ===
-              typeFilter;
+          if (sortBy === "oldest") {
+            return (
+              new Date(
+                first.createdAt || 0
+              ) -
+              new Date(
+                second.createdAt || 0
+              )
+            );
+          }
 
-          return (
-            matchesSearch &&
-            matchesReadStatus &&
-            matchesType
-          );
+          return 0;
         }
       );
-
-    return [...filtered].sort(
-      (first, second) => {
-        if (sortBy === "newest") {
-          return (
-            new Date(
-              second.createdAt || 0
-            ) -
-            new Date(
-              first.createdAt || 0
-            )
-          );
-        }
-
-        if (sortBy === "oldest") {
-          return (
-            new Date(
-              first.createdAt || 0
-            ) -
-            new Date(
-              second.createdAt || 0
-            )
-          );
-        }
-
-        return 0;
-      }
-    );
-  }, [
-    notifications,
-    search,
-    filter,
-    typeFilter,
-    sortBy,
-  ]);
+    }, [
+      notifications,
+      search,
+      filter,
+      typeFilter,
+      sortBy,
+    ]);
 
   // ==========================================
   // CLEAR FILTERS
@@ -238,7 +241,9 @@ function Notifications() {
 
     const date = new Date(dateValue);
 
-    if (Number.isNaN(date.getTime())) {
+    if (
+      Number.isNaN(date.getTime())
+    ) {
       return "Date unavailable";
     }
 
@@ -302,7 +307,7 @@ function Notifications() {
       setError("");
 
       const response = await fetch(
-        `http://localhost:5000/api/notifications/${notificationId}/read`,
+        `${API_URL}/api/notifications/${notificationId}/read`,
         {
           method: "PUT",
           headers: {
@@ -356,7 +361,7 @@ function Notifications() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/api/notifications/read-all",
+        `${API_URL}/api/notifications/read-all`,
         {
           method: "PUT",
           headers: {
@@ -376,10 +381,12 @@ function Notifications() {
       }
 
       setNotifications((current) =>
-        current.map((notification) => ({
-          ...notification,
-          isRead: true,
-        }))
+        current.map(
+          (notification) => ({
+            ...notification,
+            isRead: true,
+          })
+        )
       );
 
       clearUnreadCount();
@@ -411,7 +418,7 @@ function Notifications() {
         );
 
       const response = await fetch(
-        `http://localhost:5000/api/notifications/${notificationId}`,
+        `${API_URL}/api/notifications/${notificationId}`,
         {
           method: "DELETE",
           headers: {
@@ -486,7 +493,10 @@ function Notifications() {
   // ERROR
   // ==========================================
 
-  if (error && notifications.length === 0) {
+  if (
+    error &&
+    notifications.length === 0
+  ) {
     return (
       <div className="notifications-page">
         <div className="notifications-container">
