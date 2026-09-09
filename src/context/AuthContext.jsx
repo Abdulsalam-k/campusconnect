@@ -5,6 +5,8 @@ import {
   useState,
 } from "react";
 
+import API_URL from "../config/api";
+
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
@@ -95,7 +97,7 @@ export function AuthProvider({ children }) {
 
       try {
         const response = await fetch(
-          "http://localhost:5000/api/auth/me",
+          `${API_URL}/api/auth/me`,
           {
             headers: {
               Authorization: `Bearer ${savedToken}`,

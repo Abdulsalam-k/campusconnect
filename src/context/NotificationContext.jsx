@@ -1,23 +1,42 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 import { useAuth } from "./AuthContext";
+import API_URL from "../config/api";
 
 const NotificationContext = createContext();
 
-export function NotificationProvider({ children }) {
-  const { token, isAuthenticated } = useAuth();
+export function NotificationProvider({
+  children,
+}) {
+  const {
+    token,
+    isAuthenticated,
+  } = useAuth();
 
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [unreadCount, setUnreadCount] =
+    useState(0);
+
+  // ==========================================
+  // FETCH UNREAD NOTIFICATION COUNT
+  // ==========================================
 
   async function fetchUnreadCount() {
-    if (!token || !isAuthenticated) {
+    if (
+      !token ||
+      !isAuthenticated
+    ) {
       setUnreadCount(0);
       return;
     }
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/notifications",
+        `${API_URL}/api/notifications`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -25,7 +44,8 @@ export function NotificationProvider({ children }) {
         }
       );
 
-      const result = await response.json();
+      const result =
+        await response.json();
 
       if (!response.ok) {
         throw new Error(
@@ -34,7 +54,9 @@ export function NotificationProvider({ children }) {
         );
       }
 
-      setUnreadCount(result.unreadCount);
+      setUnreadCount(
+        result.unreadCount
+      );
     } catch (error) {
       console.error(
         "Fetching notification count failed:",
@@ -43,15 +65,30 @@ export function NotificationProvider({ children }) {
     }
   }
 
+  // ==========================================
+  // REFRESH COUNT WHEN AUTH CHANGES
+  // ==========================================
+
   useEffect(() => {
     fetchUnreadCount();
-  }, [token, isAuthenticated]);
+  }, [
+    token,
+    isAuthenticated,
+  ]);
+
+  // ==========================================
+  // DECREASE UNREAD COUNT
+  // ==========================================
 
   function decreaseUnreadCount() {
     setUnreadCount((current) =>
       Math.max(current - 1, 0)
     );
   }
+
+  // ==========================================
+  // CLEAR UNREAD COUNT
+  // ==========================================
 
   function clearUnreadCount() {
     setUnreadCount(0);
@@ -73,5 +110,7 @@ export function NotificationProvider({ children }) {
 }
 
 export function useNotifications() {
-  return useContext(NotificationContext);
+  return useContext(
+    NotificationContext
+  );
 }
